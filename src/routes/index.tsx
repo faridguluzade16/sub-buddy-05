@@ -1,16 +1,23 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { LogOut, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSubscriptions } from "@/hooks/use-subscriptions";
+import { useAuth } from "@/hooks/use-auth";
 import { SummaryCards } from "@/components/SummaryCards";
 import { SubscriptionCard } from "@/components/SubscriptionCard";
 import { SubscriptionFormDialog } from "@/components/SubscriptionFormDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { daysUntil, type Subscription } from "@/lib/subscriptions";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   component: Index,
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) throw redirect({ to: "/auth" });
+  },
   head: () => ({
     meta: [
       { title: "Subtrack — Subscription Tracker" },
@@ -24,9 +31,19 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { subs, upsert, remove, hydrated } = useSubscriptions();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
+
+  // If session ends, kick to /auth
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (!session) navigate({ to: "/auth" });
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [navigate]);
 
   const sorted = useMemo(
     () =>
@@ -51,6 +68,12 @@ function Index() {
     setOpen(true);
   }
 
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) toast.error(error.message);
+    else navigate({ to: "/auth" });
+  }
+
   return (
     <div className="min-h-screen">
       {/* Ambient backdrop */}
@@ -69,13 +92,24 @@ function Index() {
                 Subtrack
               </div>
               <div className="text-[11px] text-muted-foreground -mt-0.5">
-                Subscription tracker
+                {user?.email ?? "Subscription tracker"}
               </div>
             </div>
           </div>
-          <Button onClick={handleAdd} size="sm">
-            <Plus className="mr-1 h-4 w-4" /> New
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={handleAdd} size="sm">
+              <Plus className="mr-1 h-4 w-4" /> New
+            </Button>
+            <Button
+              onClick={handleSignOut}
+              size="icon"
+              variant="ghost"
+              aria-label="Sign out"
+              className="h-9 w-9"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </header>
 
