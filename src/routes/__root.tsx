@@ -37,6 +37,10 @@ export const Route = createRootRoute({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Subtrack — Subscription Tracker" },
+      { name: "twitter:description", content: "Track subscriptions, monitor spend, never miss a renewal." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ee9f0dfd-ed34-4483-ba9b-1566f6a54697" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/ee9f0dfd-ed34-4483-ba9b-1566f6a54697" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
