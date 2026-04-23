@@ -14,7 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"]
+          category: Database["public"]["Enums"]["subscription_category"]
+          cost: number
+          created_at: string
+          currency: Database["public"]["Enums"]["subscription_currency"]
+          emoji: string
+          id: string
+          name: string
+          notes: string | null
+          renewal_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
+          category?: Database["public"]["Enums"]["subscription_category"]
+          cost: number
+          created_at?: string
+          currency?: Database["public"]["Enums"]["subscription_currency"]
+          emoji?: string
+          id?: string
+          name: string
+          notes?: string | null
+          renewal_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
+          category?: Database["public"]["Enums"]["subscription_category"]
+          cost?: number
+          created_at?: string
+          currency?: Database["public"]["Enums"]["subscription_currency"]
+          emoji?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          renewal_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +91,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      billing_cycle: "monthly" | "yearly"
+      subscription_category:
+        | "Entertainment"
+        | "Productivity"
+        | "Health"
+        | "Other"
+      subscription_currency: "USD" | "EUR" | "GBP" | "AZN"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +224,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      billing_cycle: ["monthly", "yearly"],
+      subscription_category: [
+        "Entertainment",
+        "Productivity",
+        "Health",
+        "Other",
+      ],
+      subscription_currency: ["USD", "EUR", "GBP", "AZN"],
+    },
   },
 } as const
