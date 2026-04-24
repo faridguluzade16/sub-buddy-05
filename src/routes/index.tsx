@@ -1,6 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { LogOut, Plus } from "lucide-react";
+import { LogOut, Plus, FileUp } from "lucide-react";
+import { ImportStatementDialog } from "@/components/ImportStatementDialog";
 import { Button } from "@/components/ui/button";
 import { useSubscriptions } from "@/hooks/use-subscriptions";
 import { useAuth } from "@/hooks/use-auth";
@@ -35,6 +36,7 @@ function Index() {
   const navigate = useNavigate();
   const { subs, upsert, remove, hydrated } = useSubscriptions();
   const [open, setOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
 
   // If session ends, kick to /auth
@@ -97,6 +99,23 @@ function Index() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setImportOpen(true)}
+              size="sm"
+              variant="outline"
+              className="hidden sm:inline-flex"
+            >
+              <FileUp className="mr-1 h-4 w-4" /> Import PDF
+            </Button>
+            <Button
+              onClick={() => setImportOpen(true)}
+              size="icon"
+              variant="outline"
+              aria-label="Import PDF statement"
+              className="sm:hidden h-9 w-9"
+            >
+              <FileUp className="h-4 w-4" />
+            </Button>
             <Button onClick={handleAdd} size="sm">
               <Plus className="mr-1 h-4 w-4" /> New
             </Button>
@@ -189,6 +208,12 @@ function Index() {
         onOpenChange={setOpen}
         initial={editing}
         onSave={upsert}
+      />
+
+      <ImportStatementDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        onImport={upsert}
       />
     </div>
   );
